@@ -24,7 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\V1\" />
     <Folder Include="Controllers\V2\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

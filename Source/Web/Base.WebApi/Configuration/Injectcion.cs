@@ -23,15 +23,7 @@ public static class Injectcion
                .CreateLogger();
         services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
         services.InitializeAutoMapper(typeof(ApplicationAssembly).Assembly, typeof(InfrastructureAssembly).Assembly, typeof(DomainAssembly).Assembly);
-        services.AddCoresSetting(configuration);
-        //services.AddQuartzService();
-        services.UseSftp(new SftpConfig
-        {
-            Host = configuration["Cati_Internal:IP"],
-            UserName = configuration["Cati_Internal:Username"],
-            Password = configuration["Cati_Internal:Password"],
-            Port = 22
-        });
+        services.AddCoresSetting(configuration); 
         services.AddMinimalMvc();
         services.AddMemoryCache();
         services.AddJwtAuthentication(configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());
@@ -173,5 +165,28 @@ public class CustomMappingProfile : Profile
     {
         foreach (var item in haveCustomMappings)
             item.CreateMappings(this);
+    }
+}
+public static class AutofacConfiguration
+{
+    public static void AddServices(this ContainerBuilder containerBuilder)
+    {
+        var application = typeof(ApplicationAssembly).Assembly;
+        var infrastructure = typeof(InfrastructureAssembly).Assembly;
+        var domain = typeof(DomainAssembly).Assembly;
+        containerBuilder.RegisterAssemblyTypes(application, infrastructure, domain)
+            .AssignableTo<IScopedDependency>()
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+
+        containerBuilder.RegisterAssemblyTypes(application, infrastructure, domain)
+            .AssignableTo<ITransientDependency>()
+            .AsImplementedInterfaces()
+            .InstancePerDependency();
+
+        containerBuilder.RegisterAssemblyTypes(application, infrastructure, domain)
+            .AssignableTo<ISingletonDependency>()
+            .AsImplementedInterfaces()
+            .SingleInstance();
     }
 }

@@ -1,5 +1,9 @@
 ﻿using Base.Infrastructure.Utilities;
 
+using Dapper;
+
+using static Dapper.SqlMapper;
+
 namespace Base.Application.Users;
 public class UserServices : BaseService<UserServices>, IUserInterfaces
 {
@@ -28,49 +32,71 @@ public class UserServices : BaseService<UserServices>, IUserInterfaces
             throw new BadRequestException(ApiResultStatusCode.BadRequest);
         }
 
-        var gridReader = await SqlConnection.GetQueryMultipleAsync(userDatabase, UserStoredProcedure.UserLogin, null, cancellationToken);
+        using IDbConnection db = SqlConnection.GetDbConnectionAsync();
+        GridReader? gridReader = null;
+        AccessToken jwt = new();
+        try
+        {
+            //var gridReader = await SqlConnection.GetQueryMultipleAsync(userDatabase, UserStoredProcedure.UserLogin, cancellationToken);
+            db.Open();
+            DynamicParameters getSamplet = new(userDatabase);
+            getSamplet.Add("@Result", null, DbType.Int64, ParameterDirection.ReturnValue);
+            gridReader = await db.QueryMultipleAsync(
+                UserStoredProcedure.UserLogin,
+                getSamplet,
+                commandType: CommandType.StoredProcedure);
 
-        if (gridReader is null)
-        {
-            var ex = new UnauthorizedException("اطلاعات وارد شده اشتباه است")
+            if (gridReader is null)
             {
-                HttpStatusCode = HttpStatusCode.Unauthorized
-            };
-            await Task.FromException(ex);
-            throw ex;
-        }
-        User? user = await gridReader.ReadFirstOrDefaultAsync<User>();
-        if (user is null)
-        {
-            throw new UnauthorizedException("اطلاعات وارد شده اشتباه است")
+                var ex = new UnauthorizedException("اطلاعات وارد شده اشتباه است")
+                {
+                    HttpStatusCode = HttpStatusCode.Unauthorized
+                };
+                await Task.FromException(ex);
+                throw ex;
+            }
+            User? user = await gridReader.ReadFirstAsync<User?>();
+            Role? role = await gridReader.ReadFirstAsync<Role?>();
+            if (user is null)
             {
-                HttpStatusCode = HttpStatusCode.Unauthorized
-            };
-        }
-        Role? role = await gridReader.ReadFirstOrDefaultAsync<Role>();
-        if (role is null)
-        {
-            throw new UnauthorizedException("اطلاعات وارد شده اشتباه است")
+                throw new UnauthorizedException("اطلاعات وارد شده اشتباه است")
+                {
+                    HttpStatusCode = HttpStatusCode.Unauthorized
+                };
+            }
+            if (role is null)
             {
-                HttpStatusCode = HttpStatusCode.Unauthorized
-            };
-        }
+                throw new UnauthorizedException("اطلاعات وارد شده اشتباه است")
+                {
+                    HttpStatusCode = HttpStatusCode.Unauthorized
+                };
+            }
 
-        AccessToken jwt = JwtInterface.Generate(new()
-        {
-            { ClaimTypes.NameIdentifier, user.FullName },
-            { UserClaimName.UserFullName, user.FullName },
-            { UserClaimName.PersonId, user.PersonId.ToString() },
-            { UserClaimName.UserId, user.UserId.ToString() },
+            jwt = JwtInterface.Generate(new()
+            {
+                { ClaimTypes.NameIdentifier, user.FullName },
+                { UserClaimName.UserFullName, user.FullName },
+                { UserClaimName.PersonId, user.PersonId.ToString() },
+                { UserClaimName.UserId, user.UserId.ToString() },
 
-            { ClaimTypes.Role, role.RoleId.ToString() },
-            { UserClaimName.RoleName, role.RoleName },
-            { UserClaimName.RoleCaption, role.RoleCaption },
-            { UserClaimName.RoleId, role.RoleId.ToString() },
-            { UserClaimName.PersonRoleId, role.PersonRoleId.ToString() },
-        });
-        jwt.RoleId = role.RoleId;
-        jwt.FullName = user.FullName;
-        return jwt;
+                { ClaimTypes.Role, role.RoleId.ToString() },
+                { UserClaimName.RoleName, role.RoleName },
+                { UserClaimName.RoleCaption, role.RoleCaption },
+                { UserClaimName.RoleId, role.RoleId.ToString() },
+                { UserClaimName.PersonRoleId, role.PersonRoleId.ToString() },
+            });
+            jwt.RoleId = role.RoleId;
+            jwt.FullName = user.FullName;
+            return jwt;
+        }
+        catch
+        {
+            return jwt;
+        }
+        finally
+        {
+            db.Close();
+            db.Dispose();
+        }
     }
 }

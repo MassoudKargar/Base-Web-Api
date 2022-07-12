@@ -1,20 +1,12 @@
 ﻿namespace Base.Infrastructure.WebSetting;
 
-using Base.Infrastructure.Exceptions;
-
-using Microsoft.AspNetCore.Mvc;
-
-using System.Linq;
-
-using Utilities;
-
 public class ApiResult
 {
     public bool IsSuccess { get; set; }
     public ApiResultStatusCode StatusCode { get; set; }
     public string Message { get; set; }
 
-    public ApiResult(bool isSuccess, ApiResultStatusCode statusCode, string message = null)
+    public ApiResult(bool isSuccess, ApiResultStatusCode statusCode, string? message = null)
     {
         IsSuccess = isSuccess;
         StatusCode = statusCode;
@@ -49,7 +41,7 @@ public class ApiResult<TData> : ApiResult
     where TData : class
 {
     public TData Data { get; set; }
-    public ApiResult(bool isSuccess, ApiResultStatusCode statusCode, TData data, string message = null)
+    public ApiResult(bool isSuccess, ApiResultStatusCode statusCode, TData? data, string? message = null)
         : base(isSuccess, statusCode, message)
     {
         Data = data;
@@ -64,7 +56,7 @@ public class ApiResult<TData> : ApiResult
     => new(true, ApiResultStatusCode.OK, null);
 
     public static implicit operator ApiResult<TData>(OkObjectResult result)
-    => new(true, ApiResultStatusCode.OK, (TData)result.Value);
+    => new(true, ApiResultStatusCode.OK, result.Value as TData);
 
     public static implicit operator ApiResult<TData>(BadRequestResult result)
     => new(false, ApiResultStatusCode.BadRequest, null);
@@ -87,6 +79,6 @@ public class ApiResult<TData> : ApiResult
     => new(false, ApiResultStatusCode.NotFound, null);
 
     public static implicit operator ApiResult<TData>(NotFoundObjectResult result)
-    => new(false, ApiResultStatusCode.NotFound, (TData)result.Value);
+    => new(false, ApiResultStatusCode.NotFound, result.Value as TData);
     #endregion
 }

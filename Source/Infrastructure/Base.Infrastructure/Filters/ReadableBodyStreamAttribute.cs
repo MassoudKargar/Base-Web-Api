@@ -1,4 +1,4 @@
-﻿namespace Base.WebApi.Configuration.Filters;
+﻿namespace Base.Infrastructure.Configuration.Filters;
 
 public class ReadableBodyStreamAttribute : AuthorizeAttribute, IAuthorizationFilter
 {

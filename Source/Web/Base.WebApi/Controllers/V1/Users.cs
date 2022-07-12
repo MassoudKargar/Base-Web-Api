@@ -14,7 +14,7 @@ public class Users : BaseController<Users, IUserInterfaces>
     /// </summary>
     /// <param name="userDto">اطلاعات کاربر به صورت مدل های قراردادی ار طریق این فیلد به سیستم وارد میشود</param>
     /// <param name="cancellationToken">در صورت لغو درخواست از طرف کاربر عملیات متوقف میشود </param>
-    /// <returns><![CDATA[AccessToken]]></returns>
+    /// <returns></returns>
     [HttpPost]
     [AllowAnonymous]
     public virtual async Task<AccessToken> Token(UserDto userDto, CancellationToken cancellationToken) =>

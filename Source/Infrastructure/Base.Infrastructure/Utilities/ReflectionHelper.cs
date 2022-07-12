@@ -9,15 +9,12 @@ public static class ReflectionHelper
 
     public static bool HasAttribute(this MemberInfo type, Type attribute, bool inherit = false)
         => Attribute.IsDefined(type, attribute, inherit);
-    //return type.IsDefined(attribute, inherit);
-    //return type.GetCustomAttributes(attribute, inherit).Length > 0;
 
     public static bool IsInheritFrom<T>(this Type type)
         => IsInheritFrom(type, typeof(T));
 
     public static bool IsInheritFrom(this Type type, Type parentType)
         => parentType.IsAssignableFrom(type);
-    //the 'is' keyword do this too for values (new ChildClass() is ParentClass)
 
     public static bool BaseTypeIsGeneric(this Type type, Type genericType)
         => type.BaseType?.IsGenericType == true && type.BaseType.GetGenericTypeDefinition() == genericType;
@@ -57,7 +54,6 @@ public static class ReflectionHelper
     }
 
     public static bool IsCustomType(this Type type) =>
-        //return type.Assembly.GetName().Name != "mscorlib";
         type.IsCustomValueType() || type.IsCustomReferenceType();
 
     public static bool IsCustomValueType(this Type type)

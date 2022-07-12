@@ -1,4 +1,4 @@
-﻿namespace Base.WebApi.Configuration.Filters;
+﻿namespace Base.Infrastructure.Configuration.Filters;
 
 public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
 {
@@ -9,7 +9,7 @@ public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
     }
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        string roleId = context.HttpContext.User.Claims.FirstOrDefault(f => f.Type == UserClaimName.RoleId)?.Value;
+        string? roleId = context.HttpContext.User.Claims.FirstOrDefault(f => f.Type == UserClaimName.RoleId)?.Value;
         if (roleId == null)
         {
             throw new SecurityTokenExpiredException("عدم دسترسی");

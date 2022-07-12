@@ -8,13 +8,14 @@ public sealed class SqlConnectionString : ISingletonDependency, ISqlConnection
     }
     private IConfiguration Configuration { get; }
 
-    private IDbConnection GetDbConnectionAsync() =>
+    public IDbConnection GetDbConnectionAsync() =>
         new SqlConnection(Configuration.GetConnectionString("CommandServerFinally"));
 
-    public async Task<SqlMapper.GridReader?> GetQueryMultipleAsync(dynamic dynamicParameters, string storedProcedure, string? databaseName, CancellationToken cancellationToken, bool setSubNameDatabase)
+    public async Task<List<dynamic>> GetQueryMultipleAsync(dynamic dynamicParameters, string storedProcedure, CancellationToken cancellationToken)
     {
         using IDbConnection db = GetDbConnectionAsync();
-        SqlMapper.GridReader? gridReader;
+        SqlMapper.GridReader? gridReader = null;
+        List<dynamic> result = new();
         try
         {
             db.Open();
@@ -24,17 +25,27 @@ public sealed class SqlConnectionString : ISingletonDependency, ISqlConnection
                 storedProcedure,
                 getSamplet,
                 commandType: CommandType.StoredProcedure);
+            while (true)
+            {
+                try
+                {
+                    result.Add(await gridReader.ReadAsync<dynamic>());
+                }
+                catch
+                {
+                    return result;
+                }
+            }
         }
-        catch 
-        { 
-            gridReader = null;
+        catch
+        {
+            return null;
         }
         finally
         {
             db.Close();
             db.Dispose();
         }
-
-        return gridReader;
+        return result;
     }
 }

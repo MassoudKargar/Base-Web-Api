@@ -1,36 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-	<NoWarn>$(NoWarn);1591</NoWarn>
-    <ImplicitUsings>enable</ImplicitUsings>
-	<DocumentationFile>MyApi.xml</DocumentationFile>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DocumentationFile>MyApi.xml</DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+		<PackageReference Include="Pluralize.NET" Version="1.0.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.3.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-    <PackageReference Include="Pluralize.NET" Version="1.0.2" />
-    <PackageReference Include="Quartz" Version="3.4.0" />
-    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.3.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Controllers\V2\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\V2\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Application\Base.Application\Base.Application.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Base.Infrastructure\Base.Infrastructure.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Application\Base.Application\Base.Application.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\Base.Infrastructure\Base.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>

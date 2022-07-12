@@ -1,14 +1,15 @@
-﻿namespace Base.Infrastructure.Databases.Connections;
+﻿using Base.Domain.Configuration;
+
+namespace Base.Infrastructure.Databases.Connections;
 public interface ISqlConnection
 {
+    IDbConnection GetDbConnectionAsync();
     /// <summary>
     /// اتصال با دیتابیس
     /// </summary>
     /// <param name="dynamicParameters"></param>
     /// <param name="storedProcedure"></param>
-    /// <param name="databaseName"></param>
     /// <param name="cancellationToken"></param>
-    /// <param name="setSubNameDatabase"></param>
     /// <returns></returns>
-    Task<SqlMapper.GridReader?> GetQueryMultipleAsync(dynamic dynamicParameters, string storedProcedure, string? databaseName, CancellationToken cancellationToken, bool setSubNameDatabase = true);
+    Task<List<dynamic>> GetQueryMultipleAsync(dynamic dynamicParameters, string storedProcedure,CancellationToken cancellationToken);
 }

@@ -15,12 +15,12 @@ public static class SwaggerConfigurationExtensions
         //services.AddSwaggerExamplesFromAssemblyOf<PersonRequestExample>();
 
         //We call this method for by reflection with the Startup type of entry assmebly (MyApi assembly)
-        var mainAssembly = Assembly.GetEntryAssembly(); // => MyApi project assembly
+        Assembly mainAssembly = Assembly.GetExecutingAssembly(); // => MyApi project assembly
         var mainType = mainAssembly.GetExportedTypes()[0];
 
         const string methodName = nameof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions.AddSwaggerExamplesFromAssemblyOf);
         //MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetMethod(methodName);
-        MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetRuntimeMethods().FirstOrDefault(x => x.Name == methodName && x.IsGenericMethod);
+        MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetRuntimeMethods().First(x => x.Name == methodName && x.IsGenericMethod);
         MethodInfo generic = method.MakeGenericMethod(mainType);
         generic.Invoke(null, new[] { services });
         #endregion

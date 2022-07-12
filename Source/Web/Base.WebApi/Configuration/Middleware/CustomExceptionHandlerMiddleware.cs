@@ -12,15 +12,12 @@ public class CustomExceptionHandlerMiddleware
 {
     private RequestDelegate Next { get; }
     private IWebHostEnvironment Env { get; }
-    private ILogger<CustomExceptionHandlerMiddleware> Logger { get; }
 
     public CustomExceptionHandlerMiddleware(RequestDelegate next,
-        IWebHostEnvironment env,
-        ILogger<CustomExceptionHandlerMiddleware> logger)
+        IWebHostEnvironment env)
     {
         Next = next;
         Env = env;
-        Logger = logger;
     }
 
     public async Task Invoke(HttpContext context)
@@ -32,7 +29,6 @@ public class CustomExceptionHandlerMiddleware
         try
         {
             await Next(context);
-            //WriteToLogger(new AppException());
         }
         catch (TimeoutException exception)
         {
@@ -99,13 +95,6 @@ public class CustomExceptionHandlerMiddleware
             SetResponse(exception, HttpStatusCode.NotAcceptable, ApiResultStatusCode.NotAcceptable);
             await WriteToResponseAsync();
         }
-
-        //catch (AppException exception)
-        //{
-        //    WriteToLogger(exception);
-        //    SetResponse(exception, exception.HttpStatusCode, exception.ApiStatusCode);
-        //    await WriteToResponseAsync();
-        //}
         catch (Exception exception)
         {
             if (Env.IsDevelopment())
@@ -132,7 +121,6 @@ public class CustomExceptionHandlerMiddleware
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(ServiceSerialize.JsonSerialize(new ApiResult(false, apiStatusCode, message)));
         }
-
         void SetResponse(Exception exception, HttpStatusCode httpStatus, ApiResultStatusCode apiResultStatus)
         {
             httpStatusCode = httpStatus;

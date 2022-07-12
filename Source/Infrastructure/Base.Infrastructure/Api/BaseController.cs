@@ -1,12 +1,7 @@
-﻿
-
-using Base.Application.Jwt;
-
-namespace Base.WebApi.Controllers;
+﻿namespace Base.WebApi.Controllers;
 
 [ApiController]
 [ApiResultFilter]
-[ReadableBodyStream]
 [Route("api/v{version:apiVersion}/[controller]/[action]")]// api/v1/[controller]
 public class BaseController<T, I> : ControllerBase where T : ControllerBase where I : class
 {

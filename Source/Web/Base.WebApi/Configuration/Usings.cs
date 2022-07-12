@@ -1,3 +1,5 @@
+global using Autofac.Extensions.DependencyInjection;
+
 global using AutoMapper;
 
 global using Base.Application;
@@ -7,6 +9,7 @@ global using Base.Domain;
 global using Base.Domain.Configuration;
 global using Base.Domain.Users;
 global using Base.Infrastructure;
+global using Base.Infrastructure.Configuration;
 global using Base.Infrastructure.Enums;
 global using Base.Infrastructure.Exceptions;
 global using Base.Infrastructure.UserSettings;

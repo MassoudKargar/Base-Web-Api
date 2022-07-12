@@ -4,18 +4,6 @@
         <name>Base.WebApi</name>
     </assembly>
     <members>
-        <member name="T:Base.WebApi.Configuration.AutoMapper.AutoMapperConfiguration">
-            <summary>
-            AutoMapper تنظیمات 
-            </summary>
-        </member>
-        <member name="M:Base.WebApi.Configuration.AutoMapper.AutoMapperConfiguration.InitializeAutoMapper(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
-            <summary>
-            AutoMapper تنظیمات 
-            </summary>
-            <param name="services"></param>
-            <param name="assemblies"></param>
-        </member>
         <member name="T:Base.WebApi.Configuration.Injectcion">
             <summary>
             برای مدریت وابستگی ها
@@ -55,6 +43,23 @@
             </summary>
             <param name="services"></param>
         </member>
+        <member name="T:Base.WebApi.Configuration.AutoMapperConfiguration">
+            <summary>
+            AutoMapper تنظیمات 
+            </summary>
+        </member>
+        <member name="M:Base.WebApi.Configuration.AutoMapperConfiguration.InitializeAutoMapper(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
+            <summary>
+            AutoMapper تنظیمات 
+            </summary>
+            <param name="services"></param>
+            <param name="assemblies"></param>
+        </member>
+        <member name="T:Base.WebApi.Configuration.Swagger.ApplySummariesOperationFilter">
+            <summary>
+            سرویس ساخت توضیحات دیفالت برای خروجی برنامه
+            </summary>
+        </member>
         <member name="T:Base.WebApi.Controllers.V1.Users">
             <summary>
             تایید اطلاعات کاربر
@@ -66,12 +71,7 @@
             </summary>
             <param name="userDto">اطلاعات کاربر به صورت مدل های قراردادی ار طریق این فیلد به سیستم وارد میشود</param>
             <param name="cancellationToken">در صورت لغو درخواست از طرف کاربر عملیات متوقف میشود </param>
-            <returns></returns>
-        </member>
-        <member name="T:Ccms.WebFramework.Swagger.ApplySummariesOperationFilter">
-            <summary>
-            سرویس ساخت توضیحات دیفالت برای خروجی برنامه
-            </summary>
+            <returns><![CDATA[AccessToken]]></returns>
         </member>
     </members>
 </doc>

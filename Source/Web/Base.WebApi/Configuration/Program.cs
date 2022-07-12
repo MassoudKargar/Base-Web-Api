@@ -1,11 +1,8 @@
-using Autofac.Extensions.DependencyInjection;
-using Base.Infrastructure.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(builder => builder.AddServices()));
 builder.Services.RegisterApplicationServices(builder.Configuration);
 builder.Services.RegisterInfrastructerServices(builder.Configuration);
-
 builder.Services.RegisterWebApiServices(builder.Configuration);
 var app = builder.Build();
 app.UseCustomExceptionHandler();

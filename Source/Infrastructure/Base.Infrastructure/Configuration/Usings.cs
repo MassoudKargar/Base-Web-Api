@@ -10,7 +10,7 @@ global using Microsoft.IdentityModel.Tokens;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 
-global using Npgsql;
+global using Dapper;
 
 global using System.Collections;
 global using System.ComponentModel.DataAnnotations;
@@ -28,8 +28,5 @@ global using System.Text;
 
 #region Assembly
 namespace Base.Infrastructure;
-public class InfrastructureAssembly
-{
-
-}
+public record InfrastructureAssembly();
 #endregion

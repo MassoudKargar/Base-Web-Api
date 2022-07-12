@@ -4,6 +4,57 @@
         <name>Base.WebApi</name>
     </assembly>
     <members>
+        <member name="T:Base.WebApi.Configuration.AutoMapper.AutoMapperConfiguration">
+            <summary>
+            AutoMapper تنظیمات 
+            </summary>
+        </member>
+        <member name="M:Base.WebApi.Configuration.AutoMapper.AutoMapperConfiguration.InitializeAutoMapper(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
+            <summary>
+            AutoMapper تنظیمات 
+            </summary>
+            <param name="services"></param>
+            <param name="assemblies"></param>
+        </member>
+        <member name="T:Base.WebApi.Configuration.Injectcion">
+            <summary>
+            برای مدریت وابستگی ها
+            </summary>
+        </member>
+        <member name="M:Base.WebApi.Configuration.Injectcion.RegisterWebApiServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            برای مدریت وابستگی ها
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Base.WebApi.Configuration.Injectcion.AddCoresSetting(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            محدود کردن دسترسی ها برای اتصال به برنامه
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+        </member>
+        <member name="M:Base.WebApi.Configuration.Injectcion.AddMinimalMvc(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            مدیریت تنظیمات کنترلر ها
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:Base.WebApi.Configuration.Injectcion.AddJwtAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Base.Domain.Configuration.JwtSettings)">
+            <summary>
+            مدریت تنظیمات توکن 
+            </summary>
+            <param name="services"></param>
+            <param name="jwtSettings"></param>
+        </member>
+        <member name="M:Base.WebApi.Configuration.Injectcion.AddCustomApiVersioning(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            ApiVersioning مدریت تنظیمات 
+            </summary>
+            <param name="services"></param>
+        </member>
         <member name="T:Base.WebApi.Controllers.V1.Users">
             <summary>
             تایید اطلاعات کاربر

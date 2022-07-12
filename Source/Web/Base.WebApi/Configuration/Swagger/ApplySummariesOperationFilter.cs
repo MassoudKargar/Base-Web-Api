@@ -1,4 +1,4 @@
-﻿namespace Ccms.WebFramework.Swagger;
+﻿namespace Base.WebApi.Configuration.Swagger;
 
 /// <summary>
 /// سرویس ساخت توضیحات دیفالت برای خروجی برنامه

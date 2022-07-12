@@ -1,35 +1,25 @@
-﻿namespace Ccms.WebFramework.Swagger
+﻿namespace Base.WebApi.Configuration.Swagger;
+
+public class UnauthorizedResponsesOperationFilter : IOperationFilter
 {
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc.Authorization;
-    using Microsoft.OpenApi.Models;
+    private readonly bool _includeUnauthorizedAndForbiddenResponses;
+    private readonly string _schemeName;
 
-    using Swashbuckle.AspNetCore.SwaggerGen;
-
-    using System;
-    using System.Linq;
-
-    public class UnauthorizedResponsesOperationFilter : IOperationFilter
+    public UnauthorizedResponsesOperationFilter(bool includeUnauthorizedAndForbiddenResponses, string schemeName = JwtBearerDefaults.AuthenticationScheme)
     {
-        private readonly bool _includeUnauthorizedAndForbiddenResponses;
-        private readonly string _schemeName;
+        _includeUnauthorizedAndForbiddenResponses = includeUnauthorizedAndForbiddenResponses;
+        _schemeName = schemeName;
+    }
 
-        public UnauthorizedResponsesOperationFilter(bool includeUnauthorizedAndForbiddenResponses, string schemeName = JwtBearerDefaults.AuthenticationScheme)
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    {
+        if (_includeUnauthorizedAndForbiddenResponses)
         {
-            _includeUnauthorizedAndForbiddenResponses = includeUnauthorizedAndForbiddenResponses;
-            _schemeName = schemeName;
+            operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
+            operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Forbidden" });
         }
 
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            if (_includeUnauthorizedAndForbiddenResponses)
-            {
-                operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
-                operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Forbidden" });
-            }
-
-            operation.Security.Add(new OpenApiSecurityRequirement
+        operation.Security.Add(new OpenApiSecurityRequirement
             {
                 {
                     new OpenApiSecurityScheme
@@ -40,14 +30,13 @@
                     Array.Empty<string>() //new[] { "readAccess", "writeAccess" }
                 }
             });
-            var filters = context.ApiDescription.ActionDescriptor.FilterDescriptors;
-            var metadata = context.ApiDescription.ActionDescriptor.EndpointMetadata;
+        var filters = context.ApiDescription.ActionDescriptor.FilterDescriptors;
+        var metadata = context.ApiDescription.ActionDescriptor.EndpointMetadata;
 
-            var hasAnonymous = filters.Any(p => p.Filter is AllowAnonymousFilter) || metadata.Any(p => p is AllowAnonymousAttribute);
-            if (hasAnonymous) return;
+        var hasAnonymous = filters.Any(p => p.Filter is AllowAnonymousFilter) || metadata.Any(p => p is AllowAnonymousAttribute);
+        if (hasAnonymous) return;
 
-            var hasAuthorize = filters.Any(p => p.Filter is AuthorizeFilter) || metadata.Any(p => p is AuthorizeAttribute);
-            if (!hasAuthorize) return;
-        }
+        var hasAuthorize = filters.Any(p => p.Filter is AuthorizeFilter) || metadata.Any(p => p is AuthorizeAttribute);
+        if (!hasAuthorize) return;
     }
 }

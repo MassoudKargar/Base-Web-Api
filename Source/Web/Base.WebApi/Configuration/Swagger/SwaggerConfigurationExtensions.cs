@@ -1,51 +1,38 @@
-﻿namespace Ccms.WebFramework.Swagger
+﻿namespace Base.WebApi.Configuration.Swagger;
+
+public static class SwaggerConfigurationExtensions
 {
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.OpenApi.Models;
-    using Swashbuckle.AspNetCore.Filters;
-    using Swashbuckle.AspNetCore.SwaggerGen;
-    using Swashbuckle.AspNetCore.SwaggerUI;
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-
-    public static class SwaggerConfigurationExtensions
+    public static void AddSwagger(this IServiceCollection services)
     {
-        public static void AddSwagger(this IServiceCollection services)
+        Assert.NotNull(services, nameof(services));
+
+        //More info : https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters
+
+        #region AddSwaggerExamples
+        //Add services to use Example Filters in swagger
+        //If you want to use the Request and Response example filters (and have called options.ExampleFilters() above), then you MUST also call
+        //This method to register all ExamplesProvider classes form the assembly
+        //services.AddSwaggerExamplesFromAssemblyOf<PersonRequestExample>();
+
+        //We call this method for by reflection with the Startup type of entry assmebly (MyApi assembly)
+        var mainAssembly = Assembly.GetEntryAssembly(); // => MyApi project assembly
+        var mainType = mainAssembly.GetExportedTypes()[0];
+
+        const string methodName = nameof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions.AddSwaggerExamplesFromAssemblyOf);
+        //MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetMethod(methodName);
+        MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetRuntimeMethods().FirstOrDefault(x => x.Name == methodName && x.IsGenericMethod);
+        MethodInfo generic = method.MakeGenericMethod(mainType);
+        generic.Invoke(null, new[] { services });
+        #endregion
+
+        //Add services and configuration to use swagger
+        services.AddSwaggerGen(options =>
         {
-            Assert.NotNull(services, nameof(services));
-
-            //More info : https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters
-
-            #region AddSwaggerExamples
-            //Add services to use Example Filters in swagger
-            //If you want to use the Request and Response example filters (and have called options.ExampleFilters() above), then you MUST also call
-            //This method to register all ExamplesProvider classes form the assembly
-            //services.AddSwaggerExamplesFromAssemblyOf<PersonRequestExample>();
-
-            //We call this method for by reflection with the Startup type of entry assmebly (MyApi assembly)
-            var mainAssembly = Assembly.GetEntryAssembly(); // => MyApi project assembly
-            var mainType = mainAssembly.GetExportedTypes()[0];
-
-            const string methodName = nameof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions.AddSwaggerExamplesFromAssemblyOf);
-            //MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetMethod(methodName);
-            MethodInfo method = typeof(Swashbuckle.AspNetCore.Filters.ServiceCollectionExtensions).GetRuntimeMethods().FirstOrDefault(x => x.Name == methodName && x.IsGenericMethod);
-            MethodInfo generic = method.MakeGenericMethod(mainType);
-            generic.Invoke(null, new[] { services });
-            #endregion
-
-            //Add services and configuration to use swagger
-            services.AddSwaggerGen(options =>
-            {
-                var xmlDocPath = Path.Combine(AppContext.BaseDirectory, "MyApi.xml");
+            var xmlDocPath = Path.Combine(AppContext.BaseDirectory, "MyApi.xml");
                 //show controller XML comments like summary
                 options.IncludeXmlComments(xmlDocPath, true);
 
-                options.EnableAnnotations();
+            options.EnableAnnotations();
 
                 #region DescribeAllEnumsAsStrings
                 //This method was Deprecated. 
@@ -67,7 +54,7 @@
                 //options.IgnoreObsoleteProperties();
 
                 options.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "CCMSAPI V1" });
-                options.SwaggerDoc("v2", new OpenApiInfo { Version = "v2", Title = "CCMSAPI V2" });
+            options.SwaggerDoc("v2", new OpenApiInfo { Version = "v2", Title = "CCMSAPI V2" });
 
                 #region Filters
                 //Enable to use [SwaggerRequestExample] & [SwaggerResponseExample]
@@ -89,11 +76,11 @@
                 //Add Lockout icon on top of swagger ui page to authenticate
                 #region Old way
                 options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer token\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header
-                });
+            {
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer token\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header
+            });
                 //options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 //{
                 //    {"Bearer", new string[] { }}
@@ -142,65 +129,65 @@
 
                 //Seperate and categorize end-points by doc version
                 options.DocInclusionPredicate((docName, apiDesc) =>
-                {
-                    if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+            {
+                if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
 
-                    var versions = methodInfo.DeclaringType
-                        .GetCustomAttributes<ApiVersionAttribute>(true)
-                        .SelectMany(attr => attr.Versions);
+                var versions = methodInfo.DeclaringType
+                    .GetCustomAttributes<ApiVersionAttribute>(true)
+                    .SelectMany(attr => attr.Versions);
 
-                    return versions.Any(v => $"v{v}" == docName);
-                });
+                return versions.Any(v => $"v{v}" == docName);
+            });
                 #endregion
 
                 //If use FluentValidation then must be use this package to show validation in swagger (MicroElements.Swashbuckle.FluentValidation)
                 //options.AddFluentValidationRules();
                 #endregion
             });
-        }
+    }
 
-        //public static IApplicationBuilder UseAppLog(this IApplicationBuilder app, SiteSettings siteSettings, ILoggerFactory loggerFactory)
-        //{
-        //    Assert.NotNull(app, nameof(app));
-        //    Assert.NotNull(siteSettings, nameof(siteSettings));
+    //public static IApplicationBuilder UseAppLog(this IApplicationBuilder app, SiteSettings siteSettings, ILoggerFactory loggerFactory)
+    //{
+    //    Assert.NotNull(app, nameof(app));
+    //    Assert.NotNull(siteSettings, nameof(siteSettings));
 
-        //    app.UseWhen(context =>
-        //    context.Request.Path.StartsWithSegments(siteSettings.ElmahPath, StringComparison.OrdinalIgnoreCase),
-        //    appBuilder =>
-        //    {
-        //        appBuilder.Use((ctx, next) =>
-        //        {
-        //            ctx.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
-        //            return next();
-        //        });
-        //    });
+    //    app.UseWhen(context =>
+    //    context.Request.Path.StartsWithSegments(siteSettings.ElmahPath, StringComparison.OrdinalIgnoreCase),
+    //    appBuilder =>
+    //    {
+    //        appBuilder.Use((ctx, next) =>
+    //        {
+    //            ctx.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
+    //            return next();
+    //        });
+    //    });
 
-        //    var path = Directory.GetCurrentDirectory();
-        //    loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
+    //    var path = Directory.GetCurrentDirectory();
+    //    loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
 
-        //    //app.UseElmahIo();
-        //    return app;
-        //}
+    //    //app.UseElmahIo();
+    //    return app;
+    //}
 
-        public static IApplicationBuilder UseSwaggerAndUi(this IApplicationBuilder app)
+    public static IApplicationBuilder UseSwaggerAndUi(this IApplicationBuilder app)
+    {
+        Assert.NotNull(app, nameof(app));
+
+        //More info : https://github.com/domaindrivendev/Swashbuckle.AspNetCore
+
+        //Swagger middleware for generate "Open API Documentation" in swagger.json
+        app.UseSwagger(
+        /*options =>
         {
-            Assert.NotNull(app, nameof(app));
+            options.RouteTemplate = "api-docs/{documentName}/swagger.json";
+        }*/
+        );
 
-            //More info : https://github.com/domaindrivendev/Swashbuckle.AspNetCore
-
-            //Swagger middleware for generate "Open API Documentation" in swagger.json
-            app.UseSwagger(
-            /*options =>
-            {
-                options.RouteTemplate = "api-docs/{documentName}/swagger.json";
-            }*/
-            );
-
-            //Swagger middleware for generate UI from swagger.json
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 ورژن اصلی");
-                options.SwaggerEndpoint("/swagger/v2/swagger.json", "V2 ورژن فرعی");
+        //Swagger middleware for generate UI from swagger.json
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 ورژن اصلی");
+            options.SwaggerEndpoint("/swagger/v2/swagger.json", "V2 ورژن فرعی");
                 #region Customizing
                 //// Display    
                 //options.DefaultModelExpandDepth(2);
@@ -227,11 +214,11 @@
                 #endregion
             });
 
-            //ReDoc UI middleware. ReDoc UI is an alternative to swagger-ui
-            app.UseReDoc(options =>
-            {
-                options.SpecUrl("/swagger/v1/swagger.json");
-                options.SpecUrl("/swagger/v2/swagger.json");
+        //ReDoc UI middleware. ReDoc UI is an alternative to swagger-ui
+        app.UseReDoc(options =>
+        {
+            options.SpecUrl("/swagger/v1/swagger.json");
+            options.SpecUrl("/swagger/v2/swagger.json");
 
                 #region Customizing
                 //By default, the ReDoc UI will be exposed at "/api-docs"
@@ -239,22 +226,21 @@
                 //options.DocumentTitle = "My API Docs";
 
                 options.EnableUntrustedSpec();
-                options.ScrollYOffset(10);
-                options.HideHostname();
-                options.HideDownloadButton();
-                options.ExpandResponses("200,201");
-                options.RequiredPropsFirst();
-                options.NoAutoAuth();
-                options.PathInMiddlePanel();
-                options.HideLoading();
-                options.NativeScrollbars();
+            options.ScrollYOffset(10);
+            options.HideHostname();
+            options.HideDownloadButton();
+            options.ExpandResponses("200,201");
+            options.RequiredPropsFirst();
+            options.NoAutoAuth();
+            options.PathInMiddlePanel();
+            options.HideLoading();
+            options.NativeScrollbars();
                 //options.DisableSearch();
                 options.OnlyRequiredInSamples();
-                options.SortPropsAlphabetically();
+            options.SortPropsAlphabetically();
                 #endregion
             });
 
-            return app;
-        }
+        return app;
     }
 }

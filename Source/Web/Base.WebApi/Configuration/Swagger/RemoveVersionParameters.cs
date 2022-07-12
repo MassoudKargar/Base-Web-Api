@@ -1,12 +1,5 @@
-﻿namespace Ccms.WebFramework.Swagger
-{
-    using Microsoft.OpenApi.Models;
-
-    using Swashbuckle.AspNetCore.SwaggerGen;
-
-    using System.Linq;
-
-    public class RemoveVersionParameters : IOperationFilter
+﻿namespace Base.WebApi.Configuration.Swagger;
+public class RemoveVersionParameters : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
@@ -16,4 +9,3 @@
                 operation.Parameters.Remove(versionParameter);
         }
     }
-}

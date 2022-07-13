@@ -23,7 +23,7 @@ public static class Injectcion
                .CreateLogger();
         services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
         services.InitializeAutoMapper(typeof(ApplicationAssembly).Assembly, typeof(InfrastructureAssembly).Assembly, typeof(DomainAssembly).Assembly);
-        services.AddCoresSetting(configuration); 
+        services.AddCoresSetting(configuration);
         services.AddMinimalMvc();
         services.AddMemoryCache();
         services.AddJwtAuthentication(configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>());

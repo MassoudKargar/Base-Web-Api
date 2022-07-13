@@ -89,9 +89,12 @@ public class UserServices : BaseService<UserServices>, IUserInterfaces
             jwt.FullName = user.FullName;
             return jwt;
         }
-        catch
+        catch (DatabaseExceptions)
         {
-            return jwt;
+            throw new DatabaseExceptions(ApiResultStatusCode.ServiceUnavailable)
+            {
+                HttpStatusCode = HttpStatusCode.ServiceUnavailable
+            };
         }
         finally
         {

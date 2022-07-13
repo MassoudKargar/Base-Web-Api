@@ -60,6 +60,20 @@
             سرویس ساخت توضیحات دیفالت برای خروجی برنامه
             </summary>
         </member>
+        <member name="T:Base.WebApi.Controllers.V1.Generics">
+            <summary>
+            نمونه ها
+            </summary>
+        </member>
+        <member name="M:Base.WebApi.Controllers.V1.Generics.ServiceDynamic(Base.Domain.Generics.GenericsServiceDbDynamicEntry,System.Threading.CancellationToken)">
+            <summary>
+            اتوماتیک سرویس 
+            </summary>
+            <param name="dto"></param>
+            <param name="cancellationToken">در صورت لغو درخواست از طرف کاربر عملیات متوقف میشود </param>
+            <returns><![CDATA[ApiResult]]> تایید عملیات</returns>
+            <exception cref="T:Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException">در صورت نداشتن دسترسی خطا برمیکرداند</exception>
+        </member>
         <member name="T:Base.WebApi.Controllers.V1.Users">
             <summary>
             تایید اطلاعات کاربر

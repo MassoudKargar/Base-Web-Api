@@ -37,3 +37,12 @@ global using System.Data.SqlClient;
 global using System.Net;
 global using System.Reflection;
 global using System.Text;
+
+global using Base.Application.Generics;
+global using Base.Domain.Generics;
+global using Base.Infrastructure.Configuration.Filters;
+global using Base.Infrastructure.UserSettings;
+global using Microsoft.Extensions.Logging;
+global using System.Collections.Generic;
+global using System.Threading;
+global using System.Threading.Tasks;

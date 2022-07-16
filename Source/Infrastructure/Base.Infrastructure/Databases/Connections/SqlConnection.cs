@@ -9,7 +9,11 @@ public sealed class SqlConnectionString : ISingletonDependency, ISqlConnection
     private IConfiguration Configuration { get; }
 
     public IDbConnection GetDbConnectionAsync() =>
-        new SqlConnection(Configuration.GetConnectionString("CommandServerFinally"));
+#if DEBUG
+        new SqlConnection(Configuration.GetConnectionString("ServerDevelop"));
+#else
+        new SqlConnection(Configuration.GetConnectionString("ServerFinally"));
+#endif
 
     public async Task<List<dynamic>> GetQueryMultipleAsync(dynamic dynamicParameters, string storedProcedure, CancellationToken cancellationToken)
     {
